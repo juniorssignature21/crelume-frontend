@@ -14,47 +14,48 @@
   const navToggle = document.getElementById("navToggle");
   const navLinks = document.getElementById("navLinks");
 
-  const onScroll = () => {
-    if (window.scrollY > 12) nav.classList.add("is-scrolled");
-    else nav.classList.remove("is-scrolled");
-  };
-  onScroll();
-  window.addEventListener("scroll", onScroll, { passive: true });
+  if (nav && navToggle && navLinks) {
+    const onScroll = () => {
+      nav.classList.toggle("is-scrolled", window.scrollY > 12);
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
 
-  /* ---------- Mobile menu ---------- */
-  const closeMenu = () => {
-    nav.classList.remove("is-open");
-    navToggle.setAttribute("aria-expanded", "false");
-    navToggle.setAttribute("aria-label", "Open menu");
-    document.body.style.overflow = "";
-  };
+    /* ---------- Mobile menu ---------- */
+    const closeMenu = () => {
+      nav.classList.remove("is-open");
+      navToggle.setAttribute("aria-expanded", "false");
+      navToggle.setAttribute("aria-label", "Open menu");
+      document.body.style.overflow = "";
+    };
 
-  const openMenu = () => {
-    nav.classList.add("is-open");
-    navToggle.setAttribute("aria-expanded", "true");
-    navToggle.setAttribute("aria-label", "Close menu");
-    document.body.style.overflow = "hidden";
-  };
+    const openMenu = () => {
+      nav.classList.add("is-open");
+      navToggle.setAttribute("aria-expanded", "true");
+      navToggle.setAttribute("aria-label", "Close menu");
+      document.body.style.overflow = "hidden";
+    };
 
-  navToggle.addEventListener("click", () => {
-    if (nav.classList.contains("is-open")) closeMenu();
-    else openMenu();
-  });
+    navToggle.addEventListener("click", () => {
+      if (nav.classList.contains("is-open")) closeMenu();
+      else openMenu();
+    });
 
-  navLinks.addEventListener("click", (event) => {
-    if (event.target.closest("a")) closeMenu();
-  });
+    navLinks.addEventListener("click", (event) => {
+      if (event.target.closest("a")) closeMenu();
+    });
 
-  document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape" && nav.classList.contains("is-open")) {
-      closeMenu();
-      navToggle.focus();
-    }
-  });
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && nav.classList.contains("is-open")) {
+        closeMenu();
+        navToggle.focus();
+      }
+    });
 
-  window.addEventListener("resize", () => {
-    if (window.innerWidth > 860 && nav.classList.contains("is-open")) closeMenu();
-  });
+    window.addEventListener("resize", () => {
+      if (window.innerWidth > 860 && nav.classList.contains("is-open")) closeMenu();
+    });
+  }
 
   /* ---------- Scroll reveal ---------- */
   const revealItems = document.querySelectorAll(".reveal");
@@ -76,15 +77,11 @@
   }
 
   /* ---------- Active nav link (scroll spy) ---------- */
-  const sections = [
-    { id: "top", link: document.querySelector('.nav__link[href="#top"]') },
-    { id: "about", link: document.querySelector('.nav__link[href="#about"]') },
-    { id: "events", link: document.querySelector('.nav__link[href="#events"]') },
-    { id: "contact", link: document.querySelector('.nav__link[href="#contact"]') },
-  ]
-    .map((item) => ({
-      ...item,
-      el: document.getElementById(item.id),
+  const sections = ["top", "about", "events", "contact"]
+    .map((id) => ({
+      id,
+      link: document.querySelector(`.nav__link[data-section="${id}"]`),
+      el: document.getElementById(id),
     }))
     .filter((item) => item.el && item.link);
 
@@ -150,43 +147,14 @@
     });
   }
 
-  /* ---------- Contact form ---------- */
-  const form = document.getElementById("contactForm");
-  const status = document.getElementById("formStatus");
+  /* ---------- Contact form: clear server error state on edit ---------- */
+  const contactForm = document.getElementById("contactForm");
 
-  if (form && status) {
-    const fields = Array.from(form.querySelectorAll(".field"));
-
-    // Clear the invalid state as soon as the visitor edits the field again.
-    fields.forEach((field) => {
+  if (contactForm) {
+    contactForm.querySelectorAll(".field").forEach((field) => {
       const input = field.querySelector("input, textarea");
       if (!input) return;
       input.addEventListener("input", () => field.classList.remove("is-invalid"));
-    });
-
-    form.addEventListener("submit", (event) => {
-      event.preventDefault();
-      status.textContent = "";
-      fields.forEach((field) => field.classList.remove("is-invalid"));
-
-      const invalid = fields.filter((field) => {
-        const input = field.querySelector("input, textarea");
-        return input && !input.checkValidity();
-      });
-
-      if (invalid.length) {
-        invalid.forEach((field) => field.classList.add("is-invalid"));
-        const firstInput = invalid[0].querySelector("input, textarea");
-        if (firstInput) firstInput.focus();
-        status.textContent = "Please fill in every field before sending.";
-        status.style.color = "var(--pink)";
-        return;
-      }
-
-      const name = form.elements.name.value.trim().split(/\s+/)[0] || "friend";
-      status.style.color = "var(--green)";
-      status.textContent = `Thanks, ${name} — we'll get back to you soon.`;
-      form.reset();
     });
   }
 })();

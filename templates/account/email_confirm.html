@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}Confirm your email — Crelume{% endblock %}
+
+{% block content %}
+<section class="auth-page">
+  <div class="container auth-page__inner">
+    <div class="auth-card auth-card--center">
+      <p class="eyebrow">Email confirmation</p>
+      <h1 class="auth-title">Confirm your email address</h1>
+      <p class="auth-lead">Confirm ownership of this email to activate your Crelume account.</p>
+      <form method="post" action="{% url 'account_confirm_email' confirmation.key %}">
+        {% csrf_token %}
+        <button class="btn btn--primary btn--block" type="submit">Confirm email</button>
+      </form>
+    </div>
+  </div>
+</section>
+{% endblock %}

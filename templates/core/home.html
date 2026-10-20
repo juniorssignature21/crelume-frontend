@@ -1,0 +1,418 @@
+{% extends "base.html" %}
+
+{% block title %}Crelume — A place built for designers{% endblock %}
+
+{% block content %}
+<!-- HERO -->
+<section class="hero" id="top" aria-labelledby="hero-title">
+  <div class="container hero__inner">
+    <div class="hero__copy">
+      <h1 class="hero__title" id="hero-title">
+        A place built for designers<br>
+        to create, connect, learn<br>
+        and <span class="glitch-word"><span aria-hidden="true">B<span class="glitch-bars"><i></i><i></i><i></i></span>COME</span><span class="sr-only">BECOME</span></span>
+      </h1>
+      <p class="hero__sub">Join a community of designers. Share work, attend <br class="hero-sub-break">live sessions, build your craft with peers and mentors.</p>
+      <div class="btn-row">
+        {% if user.is_authenticated %}
+          <a class="btn btn--primary" href="{% url 'orders:account' %}">My account</a>
+        {% else %}
+          <a class="btn btn--primary" href="{% url 'account_signup' %}">Join Crelume</a>
+        {% endif %}
+        <a class="btn btn--outline" href="#events">Explore events</a>
+      </div>
+    </div>
+
+    <div class="hero__art" aria-hidden="true">
+      <span class="hero__glow"></span>
+      <svg class="squiggle" viewBox="0 0 200 120" fill="none">
+        <defs>
+          <linearGradient id="squiggleGradient" x1="20" y1="100" x2="180" y2="20" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#8B5CF6"/>
+            <stop offset="1" stop-color="#D8B4FE"/>
+          </linearGradient>
+        </defs>
+        <path d="M18 96c14-24 30-36 48-31 16 4 12 25-2 29-17 5-22-13-10-26 15-15 36-20 58-14 21 5 40 21 57 42" stroke="url(#squiggleGradient)" stroke-width="15" stroke-linecap="round"/>
+      </svg>
+      <span class="hex hex--pink hero-hex hero-hex--pink"></span>
+      <span class="hex hex--green hero-hex hero-hex--green"></span>
+      <span class="hex hex--purple hero-hex hero-hex--purple"></span>
+    </div>
+  </div>
+
+  {% if featured_event %}
+  <div class="container">
+    <article class="event-card event-card--hero" aria-labelledby="featured-hero-title">
+      <div class="event-card__main">
+        <span class="pill pill--dark">Featured event</span>
+        <div class="event-card__lockup">
+          <p class="event-kicker">{{ featured_event.kicker }}</p>
+          {% if featured_event.season %}<p class="event-season">{{ featured_event.season }}</p>{% endif %}
+          <p class="event-wordmark" id="featured-hero-title">{{ featured_event.wordmark }}</p>
+        </div>
+      </div>
+      <div class="event-card__side">
+        <h2 class="event-side__title">{{ featured_event.tagline }}</h2>
+        <p class="event-meta">
+          {{ featured_event.date_label }}<br>
+          {{ featured_event.location }}<br>
+          {% if featured_event.venue %}{{ featured_event.venue }} <span class="meta-dot">.</span> {% endif %}From {{ featured_event.formatted_price }}
+        </p>
+        <div class="btn-stack">
+          {% if featured_event.is_on_sale %}
+            <a class="btn btn--dark" href="{% url 'orders:checkout' featured_event.slug %}">Get your ticket</a>
+          {% else %}
+            <a class="btn btn--dark" href="{{ featured_event.get_absolute_url }}">Event details</a>
+          {% endif %}
+          <a class="btn btn--outline btn--sm" href="{{ featured_event.get_absolute_url }}">Details</a>
+        </div>
+      </div>
+    </article>
+  </div>
+  {% endif %}
+</section>
+
+<!-- WHAT IS CRELUME -->
+<section class="section section--what" aria-labelledby="what-title">
+  <span class="deco deco--yellow deco--yellow-what" aria-hidden="true"><span class="deco__shape"></span></span>
+  <div class="container">
+    <p class="eyebrow eyebrow--center reveal">What is Crelume</p>
+    <h2 class="h2 h2--center reveal" id="what-title">Community, resources and <br>experiences, for designers first.</h2>
+    <p class="lead lead--center reveal">learn from real conversations, find tools worth using and meet people making things.</p>
+
+    <div class="pillars">
+      <article class="pillar pillar--create reveal">
+        <h3 class="pillar__title">Create</h3>
+        <p class="pillar__text">Showcase your work, your process, and your ideas.</p>
+      </article>
+      <article class="pillar pillar--connect reveal">
+        <h3 class="pillar__title">Connect</h3>
+        <p class="pillar__text">Meet designers and creatives who understand the journey.</p>
+      </article>
+      <article class="pillar pillar--learn reveal">
+        <h3 class="pillar__title">Learn</h3>
+        <p class="pillar__text">Tools, resources, and conversations you can actually use.</p>
+      </article>
+      <article class="pillar pillar--become reveal">
+        <h3 class="pillar__title">Become</h3>
+        <p class="pillar__text">A platform to grow into more of who you're becoming.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- RESOURCES -->
+<section class="section section--resources" aria-labelledby="resources-title">
+  <span class="deco deco--gem deco--gem-resources" aria-hidden="true"><span class="deco__shape"></span></span>
+  <div class="container">
+    <p class="eyebrow reveal" id="resources-title">Resources</p>
+    <div class="resource-grid">
+      <article class="resource resource--orange reveal">
+        <h3 class="resource__title">Featured</h3>
+        <p class="resource__text">Our curated picks — the best tools, articles, and resources the Crelume community actually uses.</p>
+      </article>
+      <article class="resource resource--purple reveal">
+        <h3 class="resource__title">Latest</h3>
+        <p class="resource__text">Freshly added resources, templates, and learning materials to help you build better and faster.</p>
+      </article>
+      <article class="resource resource--yellow reveal">
+        <h3 class="resource__title">Tools &amp; Templates</h3>
+        <p class="resource__text">Ready-to-use templates, UI kits, and design files to speed up your workflow.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- COMMUNITY -->
+<section class="section section--community" aria-labelledby="community-title">
+  <span class="deco deco--star deco--star-community" aria-hidden="true">
+    <span class="deco__glow"></span>
+    <svg viewBox="0 0 120 120" width="120" height="120" aria-hidden="true">
+      <defs>
+        <linearGradient id="starGradient" x1="60" y1="10" x2="60" y2="110" gradientUnits="userSpaceOnUse">
+          <stop stop-color="#E9D5FF"/><stop offset="1" stop-color="#A855F7"/>
+        </linearGradient>
+      </defs>
+      <g stroke="url(#starGradient)" stroke-width="10" stroke-linecap="round">
+        <g transform="rotate(0 60 60)"><path d="M60 60V14"/></g>
+        <g transform="rotate(36 60 60)"><path d="M60 60V14"/></g>
+        <g transform="rotate(72 60 60)"><path d="M60 60V14"/></g>
+        <g transform="rotate(108 60 60)"><path d="M60 60V14"/></g>
+        <g transform="rotate(144 60 60)"><path d="M60 60V14"/></g>
+        <g transform="rotate(180 60 60)"><path d="M60 60V14"/></g>
+        <g transform="rotate(216 60 60)"><path d="M60 60V14"/></g>
+        <g transform="rotate(252 60 60)"><path d="M60 60V14"/></g>
+        <g transform="rotate(288 60 60)"><path d="M60 60V14"/></g>
+        <g transform="rotate(324 60 60)"><path d="M60 60V14"/></g>
+      </g>
+    </svg>
+  </span>
+
+  <div class="container">
+    <p class="eyebrow eyebrow--center reveal">Community</p>
+    <h2 class="h2 h2--center reveal" id="community-title">Meet and connect with <br>other designers.</h2>
+    <p class="lead lead--center reveal">Join conversations, share resources, and build with designers around you.</p>
+
+    <div class="hex-row reveal" aria-hidden="true">
+      <span class="hex hex--pink hex-row__hex hex-row__hex--1"></span>
+      <span class="hex hex--orange hex-row__hex hex-row__hex--2"></span>
+      <span class="hex hex--yellow hex-row__hex hex-row__hex--3"></span>
+      <span class="hex hex--purple hex-row__hex hex-row__hex--4"></span>
+      <span class="hex hex--blue hex-row__hex hex-row__hex--5"></span>
+    </div>
+
+    <div class="center-row reveal">
+      <a class="btn btn--primary" href="{% url 'account_signup' %}">Join Crelume</a>
+    </div>
+  </div>
+</section>
+
+<!-- UPCOMING EVENTS -->
+<section class="section section--upcoming" aria-labelledby="upcoming-title">
+  <span class="deco deco--gem deco--gem-upcoming" aria-hidden="true"><span class="deco__shape"></span></span>
+  <div class="container">
+    <h2 class="eyebrow eyebrow--center reveal" id="upcoming-title">Upcoming events</h2>
+
+    <div class="event-rows">
+      {% for event in upcoming_events %}
+      <article class="event-row reveal">
+        <div class="date-tile" aria-hidden="true">
+          <span class="date-tile__day">{{ event.starts_at|date:"d" }}</span>
+          <span class="date-tile__month">{{ event.starts_at|date:"M" }}</span>
+        </div>
+        <div class="event-row__body">
+          <h3 class="event-row__title"><a href="{{ event.get_absolute_url }}">{{ event.name }}</a></h3>
+          <p class="event-row__meta">
+            {% if event.is_online %}Online <span class="meta-dot">.</span> {{ event.time_label }}{% else %}{{ event.venue }}. {{ event.location }}{% endif %}
+          </p>
+        </div>
+        {% if event.is_ticketed %}
+          <div class="event-row__cta">
+            {% if event.is_on_sale %}
+              <a class="btn btn--outline btn--sm" href="{% url 'orders:checkout' event.slug %}">Tickets</a>
+            {% else %}
+              <a class="btn btn--outline btn--sm" href="{{ event.get_absolute_url }}">Details</a>
+            {% endif %}
+          </div>
+        {% endif %}
+      </article>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section class="section section--about" id="about" aria-labelledby="about-title">
+  <span class="deco deco--yellow deco--yellow-about" aria-hidden="true"><span class="deco__shape"></span></span>
+  <div class="container">
+    <p class="eyebrow eyebrow--center reveal">About</p>
+    <h2 class="h2 h2--center h2--lg reveal" id="about-title">Built for designers. <br><span class="text-green">Open to the creative.</span></h2>
+
+    <div class="about-grid">
+      <div class="about-copy reveal">
+        <h3 class="about-copy__title">Why Crelume exists.</h3>
+        <p class="about-copy__text">Crelume started because design in Nigeria has talent but no home. Too many designers learning alone, creating alone, getting stuck alone. We wanted a community where designers can learn, build, and belong — from Aba to the world.</p>
+      </div>
+
+      <div class="about-hexes reveal" aria-label="Our vision and mission">
+        <article class="hex-panel hex-panel--vision">
+          <h3>Vision</h3>
+          <p>To become the home for designers across Africa — where creativity is nurtured, talent is seen, and work moves culture forward.</p>
+        </article>
+        <article class="hex-panel hex-panel--mission">
+          <h3>Mission</h3>
+          <p>To equip designers with resources, community, and real opportunities to grow, collaborate, and create work that matters.</p>
+        </article>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- VALUES -->
+<section class="section section--values" aria-labelledby="values-title">
+  <span class="deco deco--star deco--star-values" aria-hidden="true">
+    <span class="deco__glow"></span>
+    <svg viewBox="0 0 120 120" width="104" height="104" aria-hidden="true">
+      <defs>
+        <linearGradient id="starGradientValues" x1="60" y1="10" x2="60" y2="110" gradientUnits="userSpaceOnUse">
+          <stop stop-color="#E9D5FF"/><stop offset="1" stop-color="#A855F7"/>
+        </linearGradient>
+      </defs>
+      <g stroke="url(#starGradientValues)" stroke-width="10" stroke-linecap="round">
+        <g transform="rotate(0 60 60)"><path d="M60 60V14"/></g>
+        <g transform="rotate(36 60 60)"><path d="M60 60V14"/></g>
+        <g transform="rotate(72 60 60)"><path d="M60 60V14"/></g>
+        <g transform="rotate(108 60 60)"><path d="M60 60V14"/></g>
+        <g transform="rotate(144 60 60)"><path d="M60 60V14"/></g>
+        <g transform="rotate(180 60 60)"><path d="M60 60V14"/></g>
+        <g transform="rotate(216 60 60)"><path d="M60 60V14"/></g>
+        <g transform="rotate(252 60 60)"><path d="M60 60V14"/></g>
+        <g transform="rotate(288 60 60)"><path d="M60 60V14"/></g>
+        <g transform="rotate(324 60 60)"><path d="M60 60V14"/></g>
+      </g>
+    </svg>
+  </span>
+
+  <div class="container">
+    <p class="eyebrow eyebrow--center reveal">Values</p>
+    <h2 class="h2 h2--center h2--lg reveal" id="values-title">Our Values</h2>
+
+    <div class="value-grid">
+      <article class="value-card value-card--green reveal">
+        <span class="value-card__icon value-card__icon--circle" aria-hidden="true"></span>
+        <h3 class="value-card__title">People First</h3>
+        <p class="value-card__text">Designers are not tools. We grow people before we grow products.</p>
+      </article>
+      <article class="value-card value-card--purple reveal">
+        <span class="value-card__icon value-card__icon--square" aria-hidden="true"></span>
+        <h3 class="value-card__title">Build in Public</h3>
+        <p class="value-card__text">We learn openly, share openly, and grow openly.</p>
+      </article>
+      <article class="value-card value-card--pink reveal">
+        <span class="value-card__icon value-card__icon--triangle" aria-hidden="true"></span>
+        <h3 class="value-card__title">Excellence Over Voice</h3>
+        <p class="value-card__text">We care about craft, not clout.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- WHO IT'S FOR -->
+<section class="section section--who" aria-labelledby="who-title">
+  <span class="deco deco--yellow deco--yellow-who" aria-hidden="true"><span class="deco__shape"></span></span>
+  <div class="container">
+    <h2 class="h2 h2--center h2--lg reveal" id="who-title">Who it's For</h2>
+
+    <div class="who-cluster reveal">
+      <article class="hex-panel hex-panel--aspiring">
+        <h3>Aspiring Designers</h3>
+        <p>Just starting? You'll find learning resources, community support, and a place to grow.</p>
+      </article>
+      <article class="hex-panel hex-panel--brands">
+        <h3>Brands &amp; Companies</h3>
+        <p>Want to hire great design talent? This is where you'll find them.</p>
+      </article>
+      <article class="hex-panel hex-panel--working">
+        <h3>Working Designers</h3>
+        <p>Looking to level up? Get access to jobs, resources, and people who get it.</p>
+      </article>
+    </div>
+
+    <div class="btn-row btn-row--center reveal">
+      <a class="btn btn--primary" href="{% url 'account_signup' %}">Join Crelume</a>
+      <a class="btn btn--outline" href="#events">Explore events</a>
+    </div>
+  </div>
+</section>
+
+<!-- EVENTS -->
+<section class="section section--events" id="events" aria-labelledby="events-title">
+  <div class="container">
+    <p class="eyebrow reveal">What's happening</p>
+    <h2 class="h2 reveal" id="events-title">Events</h2>
+    <p class="lead reveal">Discover what's happening at Crelume.</p>
+
+    <div class="filters reveal" role="group" aria-label="Filter events">
+      <button class="filter is-active" type="button" data-filter="all" aria-pressed="true">All</button>
+      <button class="filter" type="button" data-filter="live" aria-pressed="false">Live</button>
+      <button class="filter" type="button" data-filter="online" aria-pressed="false">Online</button>
+      <button class="filter" type="button" data-filter="upcoming" aria-pressed="false">Upcoming</button>
+      <button class="filter" type="button" data-filter="past" aria-pressed="false">Past</button>
+    </div>
+
+    <div class="events-list" id="eventsList" aria-live="polite">
+      {% for event in events %}
+      <article class="event-card event-card--events{% if event.is_online %} event-card--online{% endif %} reveal" data-tags="{{ event.filter_tags }}">
+        <div class="event-card__main">
+          {% if event.is_online %}
+            <div class="event-card__topline">
+              <span class="pill pill--dark pill--sm">Online series</span>
+              {% if event.platform %}<span class="event-platform">{{ event.platform }}</span>{% endif %}
+            </div>
+          {% else %}
+            <span class="pill pill--dark">{% if event.is_featured %}Featured{% elif event.is_ticketed %}Tickets{% else %}Event{% endif %}</span>
+          {% endif %}
+          <div class="event-card__lockup">
+            <p class="event-kicker">{{ event.kicker|linebreaksbr }}</p>
+            {% if event.season %}<p class="event-season">{{ event.season }}</p>{% endif %}
+            <p class="event-wordmark{% if event.is_online %} event-wordmark--wrap{% endif %}">{{ event.wordmark }}</p>
+          </div>
+        </div>
+        <div class="event-card__side{% if event.is_online %} event-card__side--meta{% endif %}">
+          {% if event.tagline %}<h3 class="event-side__title">{{ event.tagline }}</h3>{% endif %}
+          <p class="event-meta">
+            {% if event.is_online %}
+              {{ event.date_label }}<br>
+              {{ event.time_label }}
+            {% else %}
+              {{ event.date_label }}<br>
+              {{ event.location }}<br>
+              {% if event.venue %}{{ event.venue }} <span class="meta-dot">.</span> {% endif %}
+              {% if event.is_ticketed %}From {{ event.formatted_price }}{% endif %}
+            {% endif %}
+          </p>
+          <div class="btn-stack">
+            {% if event.is_ticketed and event.is_on_sale %}
+              <a class="btn btn--dark" href="{% url 'orders:checkout' event.slug %}">Get your ticket</a>
+            {% endif %}
+            <a class="btn btn--outline btn--sm" href="{{ event.get_absolute_url }}">Details</a>
+          </div>
+        </div>
+      </article>
+      {% empty %}
+      <p class="events-empty">No events announced yet — check back soon.</p>
+      {% endfor %}
+    </div>
+
+    <p class="events-empty" id="eventsEmpty" hidden>No past events yet — check back soon.</p>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="section section--contact" id="contact" aria-labelledby="contact-title">
+  <span class="deco deco--gem deco--gem-contact" aria-hidden="true"><span class="deco__shape"></span></span>
+  <div class="container">
+    <h2 class="h2 h2--lg reveal" id="contact-title">Say hello.</h2>
+    <p class="lead reveal">Questions, ideas, or partnerships. We read everything</p>
+
+    <form class="contact-form reveal" id="contactForm" method="post" action="{% url 'core:contact' %}">
+      {% csrf_token %}
+      {% if contact_form.non_field_errors %}
+        <div class="form-errors" role="alert">{{ contact_form.non_field_errors|striptags }}</div>
+      {% endif %}
+      {% for field in contact_form %}
+        <div class="field{% if field.errors %} is-invalid{% endif %}{% if field.name == 'captcha' %} field--captcha{% endif %}">
+          <label class="sr-only" for="{{ field.id_for_label }}">{{ field.label }}</label>
+          {{ field }}
+          {% if field.errors %}
+            <p class="field__error" id="{{ field.id_for_label }}_error">{{ field.errors|striptags }}</p>
+          {% endif %}
+        </div>
+      {% endfor %}
+      <button class="btn btn--primary" type="submit">Send message</button>
+    </form>
+
+    <div class="reach reveal">
+      <h3 class="reach__title">Other ways to reach us</h3>
+      <div class="reach__row">
+        <a class="reach-card" href="mailto:{{ contact_email }}">
+          <svg class="reach-card__icon" viewBox="0 0 40 30" aria-hidden="true">
+            <rect x="1.5" y="1.5" width="37" height="27" rx="3" fill="#FF3FA4"/>
+            <path d="M4 5l16 12L36 5" fill="none" stroke="#071225" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M4 26l12-10M36 26L24 16" fill="none" stroke="#071225" stroke-width="2.4" stroke-linecap="round"/>
+          </svg>
+          <span>Email</span>
+        </a>
+        <a class="reach-card" href="https://instagram.com/crelume" target="_blank" rel="noopener noreferrer">
+          <svg class="reach-card__icon" viewBox="0 0 34 34" aria-hidden="true">
+            <rect x="2" y="2" width="30" height="30" rx="9" fill="none" stroke="#FFD21F" stroke-width="2.6"/>
+            <circle cx="17" cy="17" r="7.2" fill="none" stroke="#FFD21F" stroke-width="2.6"/>
+            <circle cx="25.4" cy="8.6" r="2.1" fill="#FFD21F"/>
+          </svg>
+          <span>Instagram</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

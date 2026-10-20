@@ -1,0 +1,118 @@
+{% load static %}<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Crelume — A place built for designers{% endblock %}</title>
+  <meta name="description" content="{% block meta_description %}Crelume is a community, resources and experiences platform for designers to create, connect, learn and become.{% endblock %}">
+  <meta name="theme-color" content="#071225">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M50 4 92 28v44L50 96 8 72V28Z' fill='%237A2CFF'/%3E%3Ctext x='50' y='67' text-anchor='middle' font-family='Arial Black,Arial' font-size='44' fill='%23fff'%3EC%3C/text%3E%3C/svg%3E">
+  <link rel="preload" href="{% static 'assets/fonts/dm-sans-latin.woff2' %}" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="{% static 'assets/fonts/archivo-black-latin.woff2' %}" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+  <link rel="stylesheet" href="{% static 'css/app.css' %}">
+  <script>document.documentElement.classList.add('js');</script>
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <svg class="svg-defs" width="0" height="0" aria-hidden="true" focusable="false">
+    <defs>
+      <clipPath id="roundedHex" clipPathUnits="objectBoundingBox">
+        <path d="M0.29 0 Q0.25 0 0.2321 0.0358 L0.0179 0.4642 Q0 0.5 0.0179 0.5358 L0.2321 0.9642 Q0.25 1 0.29 1 L0.71 1 Q0.75 1 0.7679 0.9642 L0.9821 0.5358 Q1 0.5 0.9821 0.4642 L0.7679 0.0358 Q0.75 0 0.71 0 Z"/>
+      </clipPath>
+    </defs>
+  </svg>
+
+  <header class="nav" id="nav">
+    <div class="container nav__inner">
+      <a class="logo" href="{% url 'core:home' %}" aria-label="Crelume home">CRELUME</a>
+
+      <nav class="nav__links" id="navLinks" aria-label="Primary">
+        <a class="nav__link" data-section="top" href="/#top">Home</a>
+        <a class="nav__link" data-section="about" href="/#about">About</a>
+        <a class="nav__link" data-section="events" href="/#events">Events</a>
+        <a class="nav__link" data-section="contact" href="/#contact">Contact</a>
+
+        <div class="nav__auth-mobile">
+          {% if user.is_authenticated %}
+            <a class="nav__link" href="{% url 'orders:account' %}">My account</a>
+            <form method="post" action="{% url 'account_logout' %}">
+              {% csrf_token %}
+              <button class="nav__text-button" type="submit">Sign out</button>
+            </form>
+          {% else %}
+            <a class="nav__link" href="{% url 'account_login' %}">Sign in</a>
+            <a class="btn btn--primary btn--sm" href="{% url 'account_signup' %}">Join Crelume</a>
+          {% endif %}
+        </div>
+      </nav>
+
+      <div class="nav__actions">
+        {% if user.is_authenticated %}
+          <a class="nav__account" href="{% url 'orders:account' %}">
+            <span class="nav__account-dot" aria-hidden="true"></span>
+            My account
+          </a>
+        {% else %}
+          <a class="nav__account" href="{% url 'account_login' %}">Sign in</a>
+          <a class="btn btn--primary btn--sm nav__join" href="{% url 'account_signup' %}">Join Crelume</a>
+        {% endif %}
+        <button class="nav__toggle" id="navToggle" aria-expanded="false" aria-controls="navLinks" aria-label="Open menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  {% if messages %}
+    <div class="container site-messages" role="status" aria-live="polite">
+      {% for message in messages %}
+        <p class="site-message site-message--{{ message.tags|default:'info' }}">{{ message }}</p>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  <main id="main">
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <a class="logo footer__logo" href="{% url 'core:home' %}">CRELUME</a>
+
+      <nav class="footer__nav" aria-label="Footer">
+        <a href="/#top">Home</a>
+        <a href="/#about">About</a>
+        <a href="/#events">Event</a>
+        <a href="/#contact">Contact</a>
+        {% if user.is_authenticated %}
+          <a href="{% url 'orders:account' %}">My account</a>
+        {% else %}
+          <a href="{% url 'account_login' %}">Sign in</a>
+        {% endif %}
+      </nav>
+
+      <div class="footer__social-row">
+        <a class="footer__social" href="https://instagram.com/crelume" target="_blank" rel="noopener noreferrer" aria-label="Crelume on Instagram">
+          <svg viewBox="0 0 34 34" width="34" height="34" aria-hidden="true">
+            <rect x="2" y="2" width="30" height="30" rx="9" fill="none" stroke="currentColor" stroke-width="2.4"/>
+            <circle cx="17" cy="17" r="7.2" fill="none" stroke="currentColor" stroke-width="2.4"/>
+            <circle cx="25.4" cy="8.6" r="2" fill="currentColor"/>
+          </svg>
+        </a>
+        <p class="footer__legal"><a href="/#top">Privacy</a> <span class="meta-dot">.</span> <a href="/#top">Terms</a></p>
+      </div>
+
+      <div class="footer__bottom">
+        <p>© Crelume 2026</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="{% static 'js/main.js' %}" defer></script>
+  <script src="{% static 'js/app.js' %}" defer></script>
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

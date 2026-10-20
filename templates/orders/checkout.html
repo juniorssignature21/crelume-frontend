@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block title %}Checkout — {{ event.name }} — Crelume{% endblock %}
+
+{% block content %}
+<section class="page-hero page-hero--compact">
+  <div class="container">
+    <a class="page-back" href="{{ event.get_absolute_url }}">← Back to event</a>
+    <p class="eyebrow">Secure checkout</p>
+    <h1 class="page-title">Get your tickets</h1>
+    <p class="lead">{{ event.name }} · {{ event.date_label }}</p>
+  </div>
+</section>
+
+<section class="section section--page">
+  <div class="container checkout-grid">
+    <div class="checkout-form-card">
+      <h2 class="h3">Your details</h2>
+      <p class="muted">Tickets are emailed to you after payment. You can buy up to {{ max_ticket_quantity }} at a time.</p>
+
+      {% if not paystack_enabled %}
+        <div class="notice notice--warning" role="alert">
+          Payments are not configured on this site. Add your Paystack keys to <code>.env</code> to enable checkout.
+        </div>
+      {% endif %}
+
+      <form class="app-form" method="post" action="" id="checkoutForm" data-price="{{ event.price_kobo }}">
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+          <div class="form-errors" role="alert">{{ form.non_field_errors|striptags }}</div>
+        {% endif %}
+
+        <div class="app-field{% if form.quantity.errors %} has-error{% endif %}">
+          <label for="{{ form.quantity.id_for_label }}">{{ form.quantity.label|default:"Number of tickets" }}</label>
+          <div class="quantity-control">
+            <button type="button" class="quantity-control__button" data-quantity-step="-1" aria-label="Remove one ticket">−</button>
+            {{ form.quantity }}
+            <button type="button" class="quantity-control__button" data-quantity-step="1" aria-label="Add one ticket">+</button>
+          </div>
+          {% if form.quantity.errors %}<p class="field__error">{{ form.quantity.errors|striptags }}</p>{% endif %}
+        </div>
+
+        <div class="app-field{% if form.full_name.errors %} has-error{% endif %}">
+          <label for="{{ form.full_name.id_for_label }}">{{ form.full_name.label }}</label>
+          {{ form.full_name }}
+          {% if form.full_name.errors %}<p class="field__error">{{ form.full_name.errors|striptags }}</p>{% endif %}
+        </div>
+
+        <div class="app-field{% if form.email.errors %} has-error{% endif %}">
+          <label for="{{ form.email.id_for_label }}">{{ form.email.label }}</label>
+          {{ form.email }}
+          <p class="help-text">{{ form.email.help_text }}</p>
+          {% if form.email.errors %}<p class="field__error">{{ form.email.errors|striptags }}</p>{% endif %}
+        </div>
+
+        <div class="app-field app-field--captcha{% if form.captcha.errors %} has-error{% endif %}">
+          {{ form.captcha }}
+          {% if form.captcha.errors %}<p class="field__error">{{ form.captcha.errors|striptags }}</p>{% endif %}
+        </div>
+
+        <button class="btn btn--primary btn--block" type="submit" id="payButton" {% if not paystack_enabled %}disabled{% endif %}>
+          Pay <span id="payTotal">₦{{ event.price_naira|stringformat:"d" }}</span> with Paystack
+        </button>
+        <p class="secure-note">
+          <span aria-hidden="true">🔒</span> You'll be redirected to Paystack's secure checkout. Crelume never sees your card details.
+        </p>
+      </form>
+    </div>
+
+    <aside class="checkout-summary" aria-label="Order summary">
+      <div class="summary-card">
+        <p class="summary-card__eyebrow">Order summary</p>
+        <h2 class="summary-card__title">{{ event.name }}</h2>
+        <p class="summary-card__meta">
+          {{ event.date_label }}<br>
+          {% if event.is_online %}Online{% if event.platform %} · {{ event.platform }}{% endif %}{% else %}{{ event.location }}{% if event.venue %} · {{ event.venue }}{% endif %}{% endif %}
+        </p>
+        <dl class="summary-lines">
+          <div><dt>Price per ticket</dt><dd>₦{{ event.price_naira|stringformat:"d" }}</dd></div>
+          <div><dt>Tickets</dt><dd id="summaryQuantity">1</dd></div>
+          <div class="summary-lines__total"><dt>Total</dt><dd id="summaryTotal">₦{{ event.price_naira|stringformat:"d" }}</dd></div>
+        </dl>
+        <p class="summary-note">Tickets delivered by email. Include your correct email address.</p>
+      </div>
+    </aside>
+  </div>
+</section>
+{% endblock %}

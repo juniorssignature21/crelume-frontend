@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}Sign out — Crelume{% endblock %}
+
+{% block content %}
+<section class="auth-page">
+  <div class="container auth-page__inner">
+    <div class="auth-card">
+      <p class="eyebrow">See you soon</p>
+      <h1 class="auth-title">Sign out of Crelume?</h1>
+      <p class="auth-lead">Your tickets stay available whenever you sign back in.</p>
+      <form class="app-form" method="post" action="{% url 'account_logout' %}">
+        {% csrf_token %}
+        <button class="btn btn--primary btn--block" type="submit">Sign out</button>
+        <a class="btn btn--outline btn--block" href="{% url 'core:home' %}">Stay signed in</a>
+      </form>
+    </div>
+  </div>
+</section>
+{% endblock %}

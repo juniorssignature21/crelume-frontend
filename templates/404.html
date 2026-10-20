@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}Page not found — Crelume{% endblock %}
+
+{% block content %}
+<section class="auth-page">
+  <div class="container auth-page__inner">
+    <div class="auth-card auth-card--center">
+      <p class="eyebrow">404</p>
+      <h1 class="auth-title">This page moved on.</h1>
+      <p class="auth-lead">The link may be old, or the page may have found a new home. Let's get you back to the community.</p>
+      <a class="btn btn--primary btn--block" href="{% url 'core:home' %}">Back to Crelume</a>
+    </div>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block title %}{{ event.name }} — Crelume{% endblock %}
+{% block meta_description %}{{ event.description|truncatewords:30 }}{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+  <div class="container">
+    <a class="page-back" href="/#events">← All events</a>
+    <p class="eyebrow">{{ event.kicker|linebreaksbr }}</p>
+    <h1 class="page-title">{{ event.name }}</h1>
+
+    <div class="event-facts">
+      <div class="event-fact">
+        <span class="event-fact__label">When</span>
+        <span class="event-fact__value">{{ event.date_label }}{% if event.time_label %} · {{ event.time_label }}{% endif %}</span>
+      </div>
+      <div class="event-fact">
+        <span class="event-fact__label">Where</span>
+        <span class="event-fact__value">{{ event.location }}{% if event.venue %} · {{ event.venue }}{% endif %}</span>
+      </div>
+      {% if event.is_online and event.platform %}
+        <div class="event-fact">
+          <span class="event-fact__label">Platform</span>
+          <span class="event-fact__value">{{ event.platform }}</span>
+        </div>
+      {% endif %}
+      {% if event.is_ticketed %}
+        <div class="event-fact">
+          <span class="event-fact__label">Tickets</span>
+          <span class="event-fact__value">{{ event.formatted_price }}{% if event.tickets_remaining is not None %} · {{ event.tickets_remaining }} left{% endif %}</span>
+        </div>
+      {% endif %}
+    </div>
+
+    <div class="btn-row">
+      {% if event.is_ticketed and event.is_on_sale %}
+        <a class="btn btn--primary" href="{% url 'orders:checkout' event.slug %}">Buy tickets</a>
+      {% elif event.is_ticketed %}
+        <span class="btn btn--outline is-disabled" aria-disabled="true">Tickets unavailable</span>
+      {% else %}
+        <a class="btn btn--primary" href="/#contact">Get in touch</a>
+      {% endif %}
+      <a class="btn btn--outline" href="/#events">See all events</a>
+    </div>
+  </div>
+</section>
+
+<section class="section section--page">
+  <div class="container page-grid">
+    <div class="page-copy">
+      <h2 class="h3">About this event</h2>
+      <div class="prose">
+        {{ event.description|linebreaks }}
+      </div>
+    </div>
+
+    <aside class="page-aside" aria-label="Event summary">
+      <div class="summary-card">
+        <p class="summary-card__eyebrow">{{ event.date_label }}</p>
+        <h2 class="summary-card__title">{{ event.tagline|default:event.name }}</h2>
+        <p class="summary-card__meta">
+          {% if event.is_online %}
+            Online{% if event.platform %} · {{ event.platform }}{% endif %}<br>
+            {{ event.time_label }}
+          {% else %}
+            {{ event.location }}<br>
+            {% if event.venue %}{{ event.venue }}{% endif %}
+          {% endif %}
+        </p>
+        {% if event.is_ticketed %}
+          <p class="summary-card__price">{{ event.formatted_price }} <span>per ticket</span></p>
+          {% if event.tickets_remaining is not None %}
+            <p class="summary-card__stock">{{ event.tickets_remaining }} of {{ event.capacity }} tickets left</p>
+          {% endif %}
+          {% if event.is_on_sale %}
+            <a class="btn btn--dark" href="{% url 'orders:checkout' event.slug %}">Get your ticket</a>
+          {% else %}
+            <span class="btn btn--outline is-disabled" aria-disabled="true">Sales closed</span>
+          {% endif %}
+        {% endif %}
+      </div>
+    </aside>
+  </div>
+</section>
+{% endblock %}

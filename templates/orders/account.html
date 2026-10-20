@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}My account — Crelume{% endblock %}
+
+{% block content %}
+<section class="page-hero page-hero--compact">
+  <div class="container">
+    <p class="eyebrow">My account</p>
+    <h1 class="page-title">Hello{% if user.get_short_name %}, {{ user.get_short_name }}{% endif %}.</h1>
+    <p class="lead">Your tickets, orders and account in one place.</p>
+  </div>
+</section>
+
+<section class="section section--page">
+  <div class="container account-grid">
+    <div class="account-main">
+      <h2 class="h3">Your orders</h2>
+      <div class="order-list">
+        {% for order in orders %}
+          <a class="order-card" href="{% url 'orders:detail' order.access_token %}">
+            <div>
+              <p class="order-card__title">{{ order.event.name }}</p>
+              <p class="order-card__meta">{{ order.created_at|date:"j M Y" }} · {{ order.quantity }} ticket{{ order.quantity|pluralize }} · {{ order.formatted_total }}</p>
+            </div>
+            <span class="status-pill status-pill--{{ order.status }}">{{ order.get_status_display }}</span>
+          </a>
+        {% empty %}
+          <div class="empty-state">
+            <p>You haven't bought any tickets yet.</p>
+            <a class="btn btn--primary" href="/#events">Explore events</a>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <aside class="account-aside">
+      <div class="summary-card">
+        <p class="summary-card__eyebrow">Signed in as</p>
+        <h2 class="summary-card__title summary-card__title--small">{{ user.get_username }}</h2>
+        <p class="summary-card__meta">{{ user.email }}</p>
+        {% if user.has_usable_password %}
+          <a class="summary-link" href="{% url 'account_change_password' %}">Change password</a>
+        {% endif %}
+        <a class="summary-link" href="{% url 'account_reset_password' %}">Reset password</a>
+        <form method="post" action="{% url 'account_logout' %}">
+          {% csrf_token %}
+          <button class="btn btn--outline btn--block" type="submit">Sign out</button>
+        </form>
+      </div>
+    </aside>
+  </div>
+</section>
+{% endblock %}

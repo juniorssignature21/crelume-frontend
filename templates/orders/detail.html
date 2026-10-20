@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block title %}Order {{ order.reference }} — Crelume{% endblock %}
+
+{% block content %}
+<section class="page-hero page-hero--compact">
+  <div class="container">
+    <a class="page-back" href="{% url 'orders:account' %}">← My account</a>
+    <p class="eyebrow">Order {{ order.reference }}</p>
+    <h1 class="page-title">{{ order.event.name }}</h1>
+    <p class="lead">
+      <span class="status-pill status-pill--{{ order.status }}">{{ order.get_status_display }}</span>
+      <span class="muted">{{ order.quantity }} ticket{{ order.quantity|pluralize }} · {{ order.formatted_total }}</span>
+    </p>
+  </div>
+</section>
+
+<section class="section section--page">
+  <div class="container page-grid">
+    <div class="page-copy">
+      {% if order.is_paid %}
+        <h2 class="h3">Your tickets</h2>
+        <p class="muted">Show each code at the door. Every ticket has a unique code.</p>
+
+        <div class="ticket-list">
+          {% for ticket in order.tickets.all %}
+            <article class="ticket">
+              <div class="ticket__top">
+                <span class="ticket__event">{{ order.event.name }}</span>
+                <span class="ticket__index">Ticket {{ forloop.counter }} of {{ order.quantity }}</span>
+              </div>
+              <p class="ticket__code">{{ ticket.code }}</p>
+              <div class="ticket__meta">
+                <span>{{ ticket.attendee_name }}</span>
+                <span>{{ order.event.date_label }}</span>
+                {% if ticket.is_checked_in %}<span class="status-pill status-pill--paid">Checked in</span>{% endif %}
+              </div>
+            </article>
+          {% empty %}
+            <p class="muted">Your tickets are being issued. Refresh in a moment, or contact {{ contact_email }}.</p>
+          {% endfor %}
+        </div>
+
+        <p class="email-status">
+          {% if order.email_sent_at %}
+            Tickets were emailed to <strong>{{ order.email }}</strong>. Check your spam folder if you don't see them.
+          {% else %}
+            We're emailing your tickets to <strong>{{ order.email }}</strong>.
+          {% endif %}
+        </p>
+      {% elif order.status == "pending" %}
+        <h2 class="h3">Payment pending</h2>
+        <p class="prose">We haven't confirmed this payment yet. If you completed checkout, verify it now — tickets are issued automatically once Paystack confirms.</p>
+        <form method="post" action="{% url 'orders:verify' order.access_token %}">
+          {% csrf_token %}
+          <button class="btn btn--primary" type="submit">Verify payment</button>
+        </form>
+        <p class="muted small">Unpaid orders are never charged without your action in Paystack's checkout.</p>
+      {% else %}
+        <h2 class="h3">This order didn't complete</h2>
+        <p class="prose">No payment was taken for this order. You can try checkout again.</p>
+        {% if order.event.is_on_sale %}
+          <a class="btn btn--primary" href="{% url 'orders:checkout' order.event.slug %}">Try again</a>
+        {% else %}
+          <a class="btn btn--outline" href="{{ order.event.get_absolute_url }}">Back to event</a>
+        {% endif %}
+      {% endif %}
+
+      <p class="muted small">Need help? Email <a href="mailto:{{ contact_email }}">{{ contact_email }}</a> and include reference {{ order.reference }}.</p>
+    </div>
+
+    <aside class="checkout-summary" aria-label="Order details">
+      <div class="summary-card">
+        <p class="summary-card__eyebrow">Order details</p>
+        <h2 class="summary-card__title">{{ order.event.name }}</h2>
+        <p class="summary-card__meta">
+          {{ order.event.date_label }}<br>
+          {% if order.event.is_online %}Online{% if order.event.platform %} · {{ order.event.platform }}{% endif %}{% else %}{{ order.event.location }}{% if order.event.venue %} · {{ order.event.venue }}{% endif %}{% endif %}
+        </p>
+        <dl class="summary-lines">
+          <div><dt>Reference</dt><dd class="mono">{{ order.reference }}</dd></div>
+          <div><dt>Tickets</dt><dd>{{ order.quantity }}</dd></div>
+          <div><dt>Total</dt><dd>{{ order.formatted_total }}</dd></div>
+          {% if order.paid_at %}<div><dt>Paid</dt><dd>{{ order.paid_at|date:"j M Y, H:i" }}</dd></div>{% endif %}
+          <div><dt>Receipt email</dt><dd>{{ order.email }}</dd></div>
+        </dl>
+      </div>
+    </aside>
+  </div>
+</section>
+{% endblock %}

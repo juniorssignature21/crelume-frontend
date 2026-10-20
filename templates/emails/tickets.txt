@@ -1,0 +1,23 @@
+Hi {{ order.full_name }},
+
+You're going to {{ event.name }}.
+
+When: {{ event.date_label }}{% if event.time_label %} ({{ event.time_label }}){% endif %}
+Where: {% if event.is_online %}Online{% if event.platform %} — {{ event.platform }}{% endif %}{% else %}{{ event.location }}{% if event.venue %} — {{ event.venue }}{% endif %}{% endif %}
+
+Order: {{ order.reference }}
+Tickets: {{ order.quantity }}
+Total paid: {{ order.formatted_total }}
+
+Your tickets
+------------
+{% for ticket in tickets %}{{ forloop.counter }}. {{ ticket.code }} — {{ ticket.attendee_name }}
+{% endfor %}
+Keep this email. Show each ticket code at the door.
+
+View your tickets anytime: {{ order_url }}
+
+Need help? Reply to this email or write to {{ contact_email }}.
+
+See you there,
+The Crelume team

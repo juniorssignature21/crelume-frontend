@@ -1,0 +1,9 @@
+{% autoescape off %}New message from the Crelume website.
+
+Name: {{ name }}
+Email: {{ email }}
+About: {{ about }}
+
+Message:
+{{ message }}
+{% endautoescape %}
