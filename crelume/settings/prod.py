@@ -14,6 +14,7 @@ Required environment variables (the app refuses to start without them):
 """
 
 import os
+from urllib.parse import urlparse
 
 from django.core.exceptions import ImproperlyConfigured
 
@@ -47,6 +48,12 @@ if not ALLOWED_HOSTS:
 SITE_URL = required("SITE_URL").rstrip("/")
 if not SITE_URL.startswith("https://"):
     raise ImproperlyConfigured("SITE_URL must be the public https:// URL.")
+
+# Always trust the public site's host and the host Render reports for the
+# service, so platform health checks pass even if ALLOWED_HOSTS is incomplete.
+for extra_host in (urlparse(SITE_URL).hostname, os.getenv("RENDER_EXTERNAL_HOSTNAME")):
+    if extra_host and extra_host not in ALLOWED_HOSTS:
+        ALLOWED_HOSTS.append(extra_host)
 
 CSRF_TRUSTED_ORIGINS = env_list("DJANGO_CSRF_TRUSTED_ORIGINS", "") or [SITE_URL]
 

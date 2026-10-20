@@ -90,7 +90,7 @@ only, so a leftover `.env` never changes a deployed configuration.
 | `DJANGO_SETTINGS_MODULE` | `crelume.settings.dev` / `crelume.settings.prod` |
 | `DJANGO_SECRET_KEY` | Required in production (50+ characters). |
 | `DJANGO_DEBUG` | `1` in development; production forces `False`. |
-| `DJANGO_ALLOWED_HOSTS` | Comma-separated public hostnames (required in production). |
+| `DJANGO_ALLOWED_HOSTS` | Comma-separated public hostnames (required in production). The `SITE_URL` host and Render's `RENDER_EXTERNAL_HOSTNAME` are added automatically. |
 | `DJANGO_CSRF_TRUSTED_ORIGINS` | Extra trusted origins; defaults to `SITE_URL` in production. |
 | `SITE_URL` | Public HTTPS base URL used in emails and the allauth Site record. |
 | `DATABASE_URL` | Supabase Postgres connection string (required in production). |
